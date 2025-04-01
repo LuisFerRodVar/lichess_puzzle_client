@@ -17,3 +17,8 @@ class Logic:
         for current in board:
             result += [current.split(" ")]
         return result
+
+    def load_puzzle(self, pgn):
+        self.board = chess.Board()
+        for move in pgn.split(" "):
+            self.board.push_san(move)
