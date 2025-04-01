@@ -5,8 +5,7 @@ from chess_logic import *
 def main():
     logic = Logic()
     ui = Ui()
-    ui.update()
-    print(logic.parse_board())
+    ui.update_board(logic.parse_board())
 
 
 main()
