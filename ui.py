@@ -1,11 +1,13 @@
 import tkinter as tk
 
 
-def create_ui():
-    root = tk.Tk()
-    root.title("Lichess Puzzle")
-    root.geometry("600x600")
-    root.mainloop()
+class Ui:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Lichess Puzzle")
+        self.root.geometry("600x600")
+
+    def update(self):
+        self.root.mainloop()
 
 
-create_ui()
