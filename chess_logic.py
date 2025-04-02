@@ -35,3 +35,6 @@ class Logic:
         self.board = self.board.transform(chess.flip_vertical)
         self.board = self.board.transform(chess.flip_horizontal)
         self.flipped = not (self.flipped)
+
+    def get_legal_moves(self):
+        return self.board.legal_moves

@@ -1,35 +1,45 @@
 import tkinter as tk
 from config import *
-
+from chess_logic import Logic
 
 class Ui:
-    def __init__(self):
+    def __init__(self, logic):
         self.root = tk.Tk()
         self.root.title("Lichess Puzzle")
-        self.root.geometry("1024x600")  # Ajuste del tamaño para una mejor distribución
+        self.root.geometry("1024x600")
         self.root.grid_rowconfigure(0, weight=1)
-        self.root.grid_columnconfigure(0, weight=0)  # Panel izquierdo con tamaño fijo
-        self.root.grid_columnconfigure(1, weight=1)  # Tablero adaptable
-
-        # Timer
+        self.root.grid_columnconfigure(0, weight=0)
+        self.root.grid_columnconfigure(1, weight=1)
+        self.root.bind("<key>", self.key_press)
         self.seconds = 0
         self.running = False
-        self.timer_id = None  # Guardar la referencia al timer
+        self.timer_id = None
+        self.logic = logic
 
         self.create_sidebar()
         self.create_board()
 
+    def key_press(self, event):
+        current_key = event.name
+        self.current_input += current_key
+        if not(any(subc in self.movelist for subc in current_key)):
+            self.current_input = ""
+        else:
+            if current_move in movelist:
+                self.logic.push_move(current_move)
+
+
+    def start_inputs(self):
+        legal_moves = str(self.logic.get_legal_moves())
+        regular_expresion = re.search(r'\((.*?)\)', legal_moves)
+        self.movelist = regular_expresion.group(1).split(", ")
+        self.current_input = ""
+
     def create_sidebar(self):
         self.sidebar = tk.Frame(self.root, width=400, bg=BACKGROUND_COLOR, padx=10, pady=10)
         self.sidebar.grid(row=0, column=0, sticky="ns")
-
         self.info_label = tk.Label(self.sidebar, text="⏺ Tu turno ⏺", fg="white", bg="#2E3440", font=("Arial", 48, "bold"))
         self.info_label.pack(pady=10)
-
-        self.move_label = tk.Label(self.sidebar, text="Movimientos: 0", fg="white", bg="#2E3440", font=("Arial", 12))
-        self.move_label.pack(pady=5)
-
-        # Label para el Timer
         self.time_label = tk.Label(self.sidebar, text="Tiempo: 00:00", fg="white", bg="#2E3440", font=("Arial", 28))
         self.time_label.pack(side="bottom", pady=5)
 
@@ -65,16 +75,11 @@ class Ui:
                 color = WHITE_PIECES if square[0].isupper() else BLACK_PIECES
                 piece = pieces[square.lower()]
                 self.board[row][col].config(fg=color, text=piece)
-        self.update()
 
     def update(self):
         self.root.mainloop()
 
-    # -------------------------------
-    # ⏳ TIMER METHODS
-    # -------------------------------
     def update_timer(self):
-        """Actualiza el timer cada segundo."""
         if self.running:
             self.seconds += 1
             mins, secs = divmod(self.seconds, 60)
@@ -82,17 +87,13 @@ class Ui:
             self.timer_id = self.root.after(1000, self.update_timer)
 
     def start_timer(self):
-        """Inicia el timer si no está corriendo."""
         if not self.running:
             self.running = True
             self.update_timer()
 
     def reset_timer(self):
-        """Reinicia el timer a 0, detiene el anterior y lo vuelve a iniciar."""
-        # Detener el timer anterior si existe
         if self.timer_id is not None:
             self.root.after_cancel(self.timer_id)
-        
         self.seconds = 0
         self.time_label.config(text="Tiempo: 00:00")
         self.running = False
