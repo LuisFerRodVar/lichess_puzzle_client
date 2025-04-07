@@ -24,16 +24,17 @@ class Ui:
     def key_press(self, event):
         current_key = event.char
         self.current_input += current_key
-        if (any(subc in self.movelist for subc in current_key)):
+        print(self.current_input)
+        if not(any(subc.startswith(self.current_input) for subc in self.movelist)):
             self.current_input = ""
         else:
-            if current_key in self.movelist:
-                self.logic.push_move(current_move)
-        print(self.current_input)
+            if self.current_input in self.movelist:
+                print(self.current_input)
+                self.logic.push_move(self.current_input)
         self.update()
 
     def start_inputs(self):
-        legal_moves = str(self.logic.get_legal_moves())
+        legal_moves = str(self.logic.get_legal_moves()).lower()
         regular_expresion = re.search(r'\((.*?)\)', legal_moves)
         self.movelist = regular_expresion.group(1).split(", ")
         self.current_input = ""
