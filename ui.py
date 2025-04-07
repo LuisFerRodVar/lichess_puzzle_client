@@ -29,14 +29,21 @@ class Ui:
             self.current_input = ""
         else:
             if self.current_input in self.movelist:
-                print(self.current_input)
-                self.logic.push_move(self.current_input)
+                for i in range(len(self.movelist)-1):
+                    # FIX: The move input is not working
+                    if (self.current_input == self.movelist[i]):
+                        self.logic.push_move(self.movelist_aux[i])
+                        break
+
         self.update()
 
     def start_inputs(self):
-        legal_moves = str(self.logic.get_legal_moves()).lower()
-        regular_expresion = re.search(r'\((.*?)\)', legal_moves)
+        legal_moves = str(self.logic.get_legal_moves())
+        legal_movesl = legal_moves.lower()
+        regular_expresion = re.search(r'\((.*?)\)', legal_movesl)
+        regular_expresion2 = re.search(r'\((.*?)\)', legal_moves)
         self.movelist = regular_expresion.group(1).split(", ")
+        self.movelist_aux = regular_expresion2.group(1).split(", ")
         self.current_input = ""
 
     def read_moves(self):
