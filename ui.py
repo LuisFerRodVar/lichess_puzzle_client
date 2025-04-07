@@ -1,6 +1,8 @@
 import tkinter as tk
 from config import *
 from chess_logic import Logic
+import re
+
 
 class Ui:
     def __init__(self, logic):
@@ -10,7 +12,7 @@ class Ui:
         self.root.grid_rowconfigure(0, weight=1)
         self.root.grid_columnconfigure(0, weight=0)
         self.root.grid_columnconfigure(1, weight=1)
-        self.root.bind("<key>", self.key_press)
+        self.root.bind("<Key>", self.key_press)
         self.seconds = 0
         self.running = False
         self.timer_id = None
@@ -20,20 +22,27 @@ class Ui:
         self.create_board()
 
     def key_press(self, event):
-        current_key = event.name
+        current_key = event.char
         self.current_input += current_key
-        if not(any(subc in self.movelist for subc in current_key)):
+        if (any(subc in self.movelist for subc in current_key)):
             self.current_input = ""
         else:
-            if current_move in movelist:
+            if current_key in self.movelist:
                 self.logic.push_move(current_move)
-
+        print(self.current_input)
+        self.update()
 
     def start_inputs(self):
         legal_moves = str(self.logic.get_legal_moves())
         regular_expresion = re.search(r'\((.*?)\)', legal_moves)
         self.movelist = regular_expresion.group(1).split(", ")
         self.current_input = ""
+
+    def read_moves(self):
+        self.start_inputs()
+        self.update()
+
+
 
     def create_sidebar(self):
         self.sidebar = tk.Frame(self.root, width=400, bg=BACKGROUND_COLOR, padx=10, pady=10)
@@ -98,4 +107,3 @@ class Ui:
         self.time_label.config(text="Tiempo: 00:00")
         self.running = False
         self.start_timer()
-

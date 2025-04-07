@@ -1,7 +1,6 @@
 from ui import *
 from chess_logic import *
 from lichess_api import get_puzzle
-import keyboard
 import re
 
 
@@ -19,26 +18,9 @@ def main():
         while True:
             ui.update_sidebar(current_player[0])
             ui.update_board(logic.parse_board())
-            legal_moves = str(logic.get_legal_moves())
-            regular_expresion = re.search(r'\((.*?)\)', legal_moves)
-            movelist = regular_expresion.group(1).split(", ")
-            current_move = ""
-            ui.update()
+            ui.read_moves()
             while True:
-                event = keyboard.read_event(suppress=True)
-                if event.event_type == keyboard.KEY_DOWN and event.name.isalnum():
-                    current_move += event.name
-                    if not(any(subc in movelist for subc in current_move)):
-                        current_move = ""
-                    else:
-                        if current_move in movelist:
-                            logic.push_move(current_move)
-                            break
-
-
-            
-
-
+                pass
 
 
 main()
